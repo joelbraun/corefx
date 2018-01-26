@@ -141,33 +141,10 @@ namespace Microsoft.CSharp.RuntimeBinder.Semantics
 
         private static bool CheckSingleConstraint(CSemanticChecker checker, ErrorHandling errHandling, Symbol symErr, TypeParameterType var, CType arg, TypeArray typeArgsCls, TypeArray typeArgsMeth, CheckConstraintsFlags flags)
         {
+            Debug.Assert(!(arg is PointerType));
+            Debug.Assert(!arg.isStaticClass());
+
             bool fReportErrors = 0 == (flags & CheckConstraintsFlags.NoErrors);
-
-            if (arg is ErrorType)
-            {
-                // Error should have been reported previously.
-                return false;
-            }
-
-            if (arg is PointerType)
-            {
-                if (fReportErrors)
-                {
-                    throw errHandling.Error(ErrorCode.ERR_BadTypeArgument, arg);
-                }
-
-                return false;
-            }
-
-            if (arg.isStaticClass())
-            {
-                if (fReportErrors)
-                {
-                    checker.ReportStaticClassError(null, arg, ErrorCode.ERR_GenericArgIsStaticClass);
-                }
-
-                return false;
-            }
 
             bool fError = false;
             if (var.HasRefConstraint() && !arg.IsRefType())
@@ -320,7 +297,6 @@ namespace Microsoft.CSharp.RuntimeBinder.Semantics
 
                 case TypeKind.TK_VoidType:
                 case TypeKind.TK_PointerType:
-                case TypeKind.TK_ErrorType:
                     return false;
 
                 case TypeKind.TK_ArrayType:
@@ -341,7 +317,6 @@ namespace Microsoft.CSharp.RuntimeBinder.Semantics
             {
                 default:
                     return false;
-                case TypeKind.TK_ErrorType:
                 case TypeKind.TK_PointerType:
                     return false;
                 case TypeKind.TK_NullableType:
