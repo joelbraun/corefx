@@ -136,7 +136,6 @@ namespace System.Data.SqlClient.Tests
             Console.WriteLine($"ConnectionTimeoutTestWithThread: Elapsed Time {theMax} and threshold {threshold}");
         }
 
-
         [OuterLoop("Can take up to 4 seconds")]
         [Fact]
         public void ExceptionsWithMinPoolSizeCanBeHandled()
