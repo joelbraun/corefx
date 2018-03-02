@@ -262,20 +262,25 @@ namespace System.Data.SqlClient
             if (securePasswords != null)
             {
                 for (int i = 0; i < securePasswords.Length; i++)
-                if (securePasswords[i] != null) {
-                    IntPtr str = IntPtr.Zero;
-                    try
+                {
+                    if (securePasswords[i] != null)
                     {
-                        str = Marshal.SecureStringToBSTR(securePasswords[i]);
-                        Marshal.Copy(str, buffer, securePasswordOffsets[i], securePasswords[i].Length * 2);
-                    }
-                    finally
-                    {
-                        Marshal.ZeroFreeBSTR(str);
+                        IntPtr str = IntPtr.Zero;
+                        try
+                        {
+                            str = Marshal.SecureStringToBSTR(securePasswords[i]);
+                            byte[] data = new byte[securePasswords[i].Length * 2];
+                            Marshal.Copy(str, data, 0, securePasswords[i].Length * 2);
+                            TdsParserStaticMethods.ObfuscatePassword(data);
+                            data.CopyTo(buffer, securePasswordOffsets[i]);
+                        }
+                        finally
+                        {
+                            Marshal.ZeroFreeBSTR(str);
+                        }
                     }
                 }
             }
-
             SNINativeMethodWrapper.SNIPacketSetData((SNIPacket)packet, buffer, bytesUsed);
         }
 

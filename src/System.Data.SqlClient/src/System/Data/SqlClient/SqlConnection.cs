@@ -695,7 +695,6 @@ namespace System.Data.SqlClient
             catch (Exception ex)
             {
                 e = ex;
-
                 throw;
             }
             finally
