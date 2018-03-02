@@ -148,6 +148,9 @@ namespace System.Data.SqlClient.Tests
                 {
                     Exception exception = Record.Exception(() => connection.Open());
                     Assert.True(exception is InvalidOperationException || exception is SqlException, $"Unexpected exception: {exception}");
+                }
+            }
+        }
 
         [Fact]
         public void ConnectionTestInvalidCredentialCombination()
