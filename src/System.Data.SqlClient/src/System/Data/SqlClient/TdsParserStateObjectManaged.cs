@@ -222,19 +222,24 @@ namespace System.Data.SqlClient.SNI
             if (securePasswords != null)
             {
                 for (int i = 0; i < securePasswords.Length; i++)
+                {
                     if (securePasswords[i] != null)
                     {
                         IntPtr str = IntPtr.Zero;
                         try
                         {
                             str = Marshal.SecureStringToBSTR(securePasswords[i]);
-                            Marshal.Copy(str, buffer, securePasswordOffsets[i], securePasswords[i].Length * 2);
+                            byte[] data = new byte[securePasswords[i].Length * 2];
+                            Marshal.Copy(str, data, 0, securePasswords[i].Length * 2);
+                            TdsParserStaticMethods.ObfuscatePassword(data);
+                            data.CopyTo(buffer, securePasswordOffsets[i]);
                         }
                         finally
                         {
                             Marshal.ZeroFreeBSTR(str);
                         }
                     }
+                }
             }
             SNIProxy.Singleton.PacketSetData((SNIPacket)packet, buffer, bytesUsed);
         }
