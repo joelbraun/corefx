@@ -14,7 +14,6 @@ namespace System.Data.SqlClient.ManualTesting.Tests
     {
 
         [CheckConnStrSetupFact]
-        [Trait("MyTrait", "MyTraitValue")]
         public static void CreateSqlConnectionWithCredential()
         {
             var user = "u" + Guid.NewGuid().ToString().Replace("-", "");
